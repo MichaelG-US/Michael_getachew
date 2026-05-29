@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Michael Getachew</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c0f;
+    --surface: #111418;
+    --surface2: #181c22;
+    --border: #1f2530;
+    --accent: #00e5a0;
+    --accent2: #0085ff;
+    --accent3: #ff6b35;
+    --text: #e8edf5;
+    --muted: #6b7891;
+    --dim: #3a4459;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Instrument Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CURSOR */
+  #cursor {
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9999;
+    transition: transform 0.15s ease, width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: exclusion;
+  }
+  #cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(0,229,160,0.4);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9998;
+    transition: transform 0.35s ease;
+  }
+  body:has(a:hover) #cursor, body:has(button:hover) #cursor { width: 24px; height: 24px; }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: 0.5;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 3rem;
+    background: rgba(10,12,15,0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+  }
+  .nav-logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+  .nav-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    background: rgba(0,229,160,0.1);
+    border: 1px solid rgba(0,229,160,0.3);
+    color: var(--accent);
+    padding: 0.3rem 0.8rem;
+    border-radius: 2px;
+    letter-spacing: 0.1em;
+  }
+
+  /* BG ELEMENTS */
+  .bg-grid {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(var(--border) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.3;
+  }
+  .bg-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(0,229,160,0.06) 0%, transparent 70%);
+    top: 10%; left: -100px;
+    pointer-events: none;
+  }
+
+  /* HERO */
+  #hero {
+    min-height: 60vh;
+    display: flex; align-items: center;
+    padding: 10rem 3rem 6rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-inner {
+    max-width: 1300px; margin: 0 auto; width: 100%;
+    position: relative; z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 0.8rem;
+  }
+  .hero-tag::before {
+    content: '';
+    display: inline-block;
+    width: 2rem; height: 1px;
+    background: var(--accent);
+  }
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(3rem, 5vw, 5.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+  }
+  h1 em { font-style: italic; color: var(--accent); }
+  .hero-desc {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--muted);
+    max-width: 500px;
+    margin-bottom: 2.5rem;
+  }
+
+  /* IDENTITY CARD */
+  .identity-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    position: relative;
+  }
+  .identity-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: linear-gradient(180deg, var(--accent), var(--accent2));
+  }
+  .id-row {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .id-row:last-child { border-bottom: none; }
+  .id-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding-top: 0.1rem;
+  }
+  .id-val {
+    font-size: 0.88rem;
+    color: var(--text);
+    text-align: right;
+    max-width: 240px;
+    line-height: 1.4;
+  }
+  .id-val.accent { color: var(--accent); }
+
+  /* BUTTONS */
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    padding: 0.85rem 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: none;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .btn-primary:hover { background: #00ffb3; transform: translateY(-2px); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 0.85rem 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: none;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    transition: border-color 0.2s, color 0.2s, transform 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+  .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+  /* SECTION BASE */
+  .section-wrap { padding: 6rem 3rem; max-width: 1300px; margin: 0 auto; }
+  .section-header { margin-bottom: 3.5rem; }
+  .section-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 0.8rem;
+    margin-bottom: 1rem;
+  }
+  .section-tag::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    max-width: 200px;
+  }
+  h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  h2 em { font-style: italic; color: var(--muted); }
+
+  /* STORY SECTION */
+  #story { border-top: 1px solid var(--border); }
+  .story-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 6rem;
+    align-items: start;
+    margin-top: 3rem;
+  }
+  .story-sidebar { position: sticky; top: 8rem; }
+  .pull-quote {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    line-height: 1.3;
+    color: var(--text);
+    padding-left: 1.5rem;
+    border-left: 3px solid var(--accent);
+    margin-bottom: 2rem;
+  }
+  .pull-quote em { font-style: italic; color: var(--accent); }
+  .sidebar-stat {
+    display: flex; flex-direction: column;
+    padding: 1.2rem 0;
+    border-top: 1px solid var(--border);
+  }
+  .sidebar-stat:last-child { border-bottom: 1px solid var(--border); }
+  .sidebar-stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.5rem;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .sidebar-stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-top: 0.3rem;
+  }
+  .story-body p {
+    font-size: 1rem;
+    color: var(--muted);
+    line-height: 1.85;
+    margin-bottom: 1.5rem;
+  }
+  .story-body p strong { color: var(--text); font-weight: 600; }
+  .story-body p .hl { color: var(--accent); }
+
+  /* VALUES */
+  #values { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    margin-top: 3rem;
+    border: 1px solid var(--border);
+  }
+  .value-item {
+    padding: 2.5rem;
+    border-right: 1px solid var(--border);
+    position: relative;
+    transition: background 0.3s;
+  }
+  .value-item:last-child { border-right: none; }
+  .value-item:hover { background: var(--surface2); }
+  .value-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 3.5rem;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 1rem;
+    transition: color 0.3s;
+  }
+  .value-item:hover .value-num { color: var(--dim); }
+  .value-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-bottom: 0.8rem;
+  }
+  .value-desc {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  /* JOURNEY */
+  .journey-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .journey-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    display: flex; gap: 1.5rem;
+    align-items: flex-start;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .journey-card:hover { border-color: rgba(0,229,160,0.25); background: var(--surface2); }
+  .journey-icon {
+    font-size: 1.8rem;
+    flex-shrink: 0;
+    width: 52px; height: 52px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+  }
+  .journey-content {}
+  .journey-year {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .journey-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    margin-bottom: 0.4rem;
+  }
+  .journey-desc {
+    font-size: 0.83rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* BEYOND WORK */
+  #beyond { border-top: 1px solid var(--border); }
+  .beyond-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-top: 3rem;
+  }
+  .beyond-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1.8rem 1.5rem;
+    text-align: center;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .beyond-card:hover { border-color: rgba(0,133,255,0.3); transform: translateY(-4px); }
+  .beyond-emoji { font-size: 2rem; margin-bottom: 0.8rem; display: block; }
+  .beyond-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* CTA BAND */
+  #cta-band {
+    border-top: 1px solid var(--border);
+    padding: 6rem 3rem;
+    text-align: center;
+  }
+  .cta-inner { max-width: 700px; margin: 0 auto; }
+  .cta-inner h2 { margin-bottom: 1rem; }
+  .cta-inner p {
+    font-size: 1rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+  }
+  .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 3rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--dim);
+    letter-spacing: 0.08em;
+  }
+  .footer-links { display: flex; gap: 2rem; }
+  .footer-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--dim);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--accent); }
+
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) {
+    .hero-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .story-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .story-sidebar { position: static; }
+    .values-grid { grid-template-columns: 1fr; }
+    .value-item { border-right: none; border-bottom: 1px solid var(--border); }
+    .value-item:last-child { border-bottom: none; }
+    .journey-grid { grid-template-columns: 1fr; }
+    .beyond-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .section-wrap { padding: 4rem 1.5rem; }
+    #hero { padding: 8rem 1.5rem 4rem; }
+    #cta-band { padding: 4rem 1.5rem; }
+    footer { padding: 1.5rem; flex-direction: column; gap: 1rem; }
+    .beyond-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">MG.portfolio</a>
+  <ul class="nav-links">
+    <li><a href="index.html#hero">Home</a></li>
+    <li><a href="about.html" class="active">About</a></li>
+    <li><a href="index.html#skills-section">Skills</a></li>
+    <li><a href="index.html#experience-section">Experience</a></li>
+    <li><a href="index.html#education-section">Education</a></li>
+    <li><a href="index.html#contact-section">Contact</a></li>
+  </ul>
+  <div class="nav-badge">Open to Work</div>
+</nav>
+
+<!-- HERO -->
+<div id="hero">
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-tag">About Me</div>
+      <h1>The person<br>behind the <em>data</em></h1>
+      <p class="hero-desc">Humanitarian practitioner turned data specialist. 15+ years building the evidence infrastructure that helps organizations save lives — now sharpening cloud and analytics skills to operate at the intersection of technology and impact.</p>
+      <div class="hero-ctas">
+        <a href="index.html#experience-section" class="btn-primary">See My Work →</a>
+        <a href="index.html#contact-section" class="btn-ghost">Get in Touch</a>
+      </div>
+    </div>
+    <div class="identity-card reveal">
+      <div class="id-row">
+        <span class="id-label">Full Name</span>
+        <span class="id-val">Michael Getachew</span>
+      </div>
+      <div class="id-row">
+        <span class="id-label">Current Role</span>
+        <span class="id-val">MEL Specialist → Data Analyst</span>
+      </div>
+      <div class="id-row">
+        <span class="id-label">Location</span>
+        <span class="id-val">Bellevue, WA 98006</span>
+      </div>
+      <div class="id-row">
+        <span class="id-label">Experience</span>
+        <span class="id-val">15+ Years · 6 UN & INGO Roles</span>
+      </div>
+      <div class="id-row">
+        <span class="id-label">Deployments</span>
+        <span class="id-val">Ethiopia · South Sudan · Ukraine · Belgium</span>
+      </div>
+      <div class="id-row">
+        <span class="id-label">Work Auth</span>
+        <span class="id-val accent">Fully Authorized · No Sponsorship Needed</span>
+      </div>
+      <div class="id-row">
+        <span class="id-label">Email</span>
+        <span class="id-val">michael.mikisol@gmail.com</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STORY -->
+<div id="story">
+<div class="section-wrap">
+  <div class="section-header reveal">
+    <div class="section-tag">My Story</div>
+    <h2>From the field to the <em>cloud</em></h2>
+  </div>
+  <div class="story-grid">
+    <div class="story-sidebar reveal">
+      <div class="pull-quote">"Data without context is noise. My career has been about turning field reality into <em>strategic signal</em>."</div>
+      <div class="sidebar-stat">
+        <span class="sidebar-stat-num">15+</span>
+        <span class="sidebar-stat-label">Years in Humanitarian Data</span>
+      </div>
+      <div class="sidebar-stat">
+        <span class="sidebar-stat-num">4</span>
+        <span class="sidebar-stat-label">Countries Deployed</span>
+      </div>
+      <div class="sidebar-stat">
+        <span class="sidebar-stat-num">6</span>
+        <span class="sidebar-stat-label">UN & INGO Positions</span>
+      </div>
+      <div class="sidebar-stat">
+        <span class="sidebar-stat-num">5</span>
+        <span class="sidebar-stat-label">Major Donors Served</span>
+      </div>
+    </div>
+    <div class="story-body reveal" style="transition-delay:0.15s">
+      <p>I started my career as a researcher trying to understand how communities survive and adapt in Ethiopia. That curiosity about people and systems led me into monitoring and evaluation — the discipline that asks not just <strong>"did we do what we said we'd do?"</strong> but <strong>"did it actually matter?"</strong></p>
+      <p>Over the following decade, I built M&E systems across some of the world's most complex humanitarian contexts: South Sudan during active conflict, Ethiopia during the GTP II agricultural transformation, and Ukraine at the height of the 2022–2025 crisis. Each assignment demanded that I translate chaotic ground-level data into clear narratives for organizations like <span class="hl">UNFPA, UNHCR, the Gates Foundation, USAID, EU, and DFID</span>.</p>
+      <p>The most meaningful work I've done has been at this intersection — between the human stories in the field and the decision-makers who control the resources. A well-designed indicator framework, a rigorously validated dataset, or a dashboard that actually gets read by a minister: these are the things that shift how funding flows and how lives are protected.</p>
+      <p>Now I'm deliberately expanding my technical toolkit. The <strong>AWS re/Start bootcamp at Per Scholas</strong>, a <strong>Data Analytics certificate from eCornell</strong>, and ongoing Python and SQL study aren't career pivots — they're depth additions. I want to work in organizations where my M&E instincts and my growing cloud and analytics skills can amplify each other, particularly in <strong>global health, public sector technology, and philanthropic impact measurement</strong>.</p>
+      <p>I'm based in Bellevue, WA — fully work-authorized, no sponsorship needed — and actively looking for roles where data and impact are both taken seriously.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- VALUES -->
+<div id="values">
+<div class="section-wrap">
+  <div class="section-header reveal">
+    <div class="section-tag">How I Work</div>
+    <h2>Principles that <em>guide me</em></h2>
+  </div>
+  <div class="values-grid">
+    <div class="value-item reveal">
+      <div class="value-num">01</div>
+      <div class="value-title">Evidence Over Anecdote</div>
+      <div class="value-desc">Fifteen years of humanitarian work taught me that good intentions aren't enough. Every decision should be traceable to data — collected rigorously, analyzed honestly, and communicated without spin.</div>
+    </div>
+    <div class="value-item reveal" style="transition-delay:0.1s">
+      <div class="value-num">02</div>
+      <div class="value-title">Context is Everything</div>
+      <div class="value-desc">Numbers without field context mislead. I've sat in refugee camps, government offices, and donor briefings — I know how differently the same data reads depending on where you're standing.</div>
+    </div>
+    <div class="value-item reveal" style="transition-delay:0.2s">
+      <div class="value-num">03</div>
+      <div class="value-title">Always Be Learning</div>
+      <div class="value-desc">The humanitarian sector taught me humility. The tech sector is teaching me velocity. Holding both — deep expertise in one domain and beginner's mind in another — is where I do my best thinking.</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- JOURNEY MILESTONES -->
+<div id="journey">
+<div class="section-wrap">
+  <div class="section-header reveal">
+    <div class="section-tag">Key Milestones</div>
+    <h2>A career in <em>motion</em></h2>
+  </div>
+  <div class="journey-grid">
+    <div class="journey-card reveal">
+      <div class="journey-icon">🎓</div>
+      <div class="journey-content">
+        <div class="journey-year">2006 · Addis Ababa</div>
+        <div class="journey-title">MA Social Anthropology</div>
+        <div class="journey-desc">Graduated from Addis Ababa University with a research focus on community systems and social dynamics — the foundation for a career built on understanding people through data.</div>
+      </div>
+    </div>
+    <div class="journey-card reveal" style="transition-delay:0.1s">
+      <div class="journey-icon">🤝</div>
+      <div class="journey-content">
+        <div class="journey-year">2009–2015 · Addis Ababa</div>
+        <div class="journey-title">M&E Coordinator, INGOs</div>
+        <div class="journey-desc">Built MEAL systems across country programs for Norwegian Church Aid, Christian Aid, and Plan International. Developed a reputation for logframes, theories of change, and donor-ready reporting.</div>
+      </div>
+    </div>
+    <div class="journey-card reveal" style="transition-delay:0.15s">
+      <div class="journey-icon">🌍</div>
+      <div class="journey-content">
+        <div class="journey-year">2015–2016 · South Sudan</div>
+        <div class="journey-title">Program Officer, Caritas Switzerland</div>
+        <div class="journey-desc">Designed M&E frameworks for WASH, Education, and emergency programs in active conflict zones — funded by EU, DFID, SDC, and USAID. First deployment to a Level 3 humanitarian emergency.</div>
+      </div>
+    </div>
+    <div class="journey-card reveal" style="transition-delay:0.2s">
+      <div class="journey-icon">🏛️</div>
+      <div class="journey-content">
+        <div class="journey-year">2016–2017 · Ethiopia</div>
+        <div class="journey-title">Monitoring Manager, Gov't of Ethiopia</div>
+        <div class="journey-desc">Joined the Agricultural Transformation Agency to lead M&E for Ethiopia's GTP II. Produced reporting to the Prime Minister's Office, Parliament, and the Gates Foundation.</div>
+      </div>
+    </div>
+    <div class="journey-card reveal" style="transition-delay:0.25s">
+      <div class="journey-icon">🇺🇳</div>
+      <div class="journey-content">
+        <div class="journey-year">2017–2018 · South Sudan</div>
+        <div class="journey-title">M&E Officer, UNHCR</div>
+        <div class="journey-desc">Designed the Protection Cluster M&E framework and introduced real-time data collection tools across refugee programs — my first UN role and entry into the humanitarian coordination architecture.</div>
+      </div>
+    </div>
+    <div class="journey-card reveal" style="transition-delay:0.3s">
+      <div class="journey-icon">📊</div>
+      <div class="journey-content">
+        <div class="journey-year">2018–2025 · UNFPA Global</div>
+        <div class="journey-title">M&E & IM Specialist, UNFPA</div>
+        <div class="journey-desc">Seven years across Ukraine, South Sudan, and global assignments — leading data systems for SRHR/GBV programs, integrating with UN coordination platforms, and shaping global donor funding decisions.</div>
+      </div>
+    </div>
+    <div class="journey-card reveal" style="transition-delay:0.35s">
+      <div class="journey-icon">☁️</div>
+      <div class="journey-content">
+        <div class="journey-year">2025 · Seattle</div>
+        <div class="journey-title">AWS re/Start · Per Scholas</div>
+        <div class="journey-desc">Completed a 15-week cloud infrastructure bootcamp, gaining hands-on AWS skills. A deliberate investment in technical depth to complement 15 years of M&E and data expertise.</div>
+      </div>
+    </div>
+    <div class="journey-card reveal" style="transition-delay:0.4s">
+      <div class="journey-icon">🎯</div>
+      <div class="journey-content">
+        <div class="journey-year">Now · Bellevue, WA</div>
+        <div class="journey-title">Seeking: Data & Impact Roles</div>
+        <div class="journey-desc">Open to data analytics, cloud, and tech-adjacent roles in global health, philanthropic impact measurement, and the nonprofit or public sector — where evidence and mission both matter.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- BEYOND WORK -->
+<div id="beyond">
+<div class="section-wrap">
+  <div class="section-header reveal">
+    <div class="section-tag">Beyond Work</div>
+    <h2>What makes me <em>tick</em></h2>
+  </div>
+  <div class="beyond-grid">
+    <div class="beyond-card reveal">
+      <span class="beyond-emoji">📚</span>
+      <div class="beyond-label">Lifelong Learner</div>
+    </div>
+    <div class="beyond-card reveal" style="transition-delay:0.08s">
+      <span class="beyond-emoji">🌏</span>
+      <div class="beyond-label">4 Countries, 1 Purpose</div>
+    </div>
+    <div class="beyond-card reveal" style="transition-delay:0.16s">
+      <span class="beyond-emoji">🐍</span>
+      <div class="beyond-label">Learning Python</div>
+    </div>
+    <div class="beyond-card reveal" style="transition-delay:0.24s">
+      <span class="beyond-emoji">🤲</span>
+      <div class="beyond-label">Community Focused</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- CTA -->
+<div id="cta-band">
+  <div class="cta-inner reveal">
+    <h2>Ready to build <em>impact</em> together?</h2>
+    <p>If you're looking for someone who bridges deep humanitarian expertise with a growing technical skillset — and who cares deeply about doing work that matters — let's talk.</p>
+    <div class="cta-btns">
+      <a href="index.html#contact-section" class="btn-primary">Contact Me →</a>
+      <a href="index.html" class="btn-ghost">← Back to Portfolio</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-text">© 2025 Michael Getachew · Bellevue, WA</div>
+  <div class="footer-links">
+    <a href="#">Resume</a>
+    <a href="#">LinkedIn</a>
+    <a href="#">GitHub</a>
+  </div>
+</footer>
+
+<script>
+// CURSOR
+const cursor = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+function animCursor() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  cursor.style.transform = `translate(${mx-6}px, ${my-6}px)`;
+  cursorRing.style.transform = `translate(${rx-18}px, ${ry-18}px)`;
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+
+// SCROLL REVEAL
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+</script>
+</body>
+</html>
